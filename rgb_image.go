@@ -6,14 +6,14 @@ import (
 )
 
 type RgbImage struct {
-	data   []byte
+	Data   []byte
 	Width  int
 	Height int
 }
 
 func NewRgbImage(width, height int) *RgbImage {
 	return &RgbImage{
-		data:   make([]byte, width*height*3),
+		Data:   make([]byte, width*height*3),
 		Width:  width,
 		Height: height,
 	}
@@ -50,9 +50,9 @@ func (image *RgbImage) DrawPixelAtIndex(index int, color Color) {
 	dataIndex := index * 3
 
 	// Set the pixel
-	image.data[dataIndex+0] = color.R
-	image.data[dataIndex+1] = color.G
-	image.data[dataIndex+2] = color.B
+	image.Data[dataIndex+0] = color.R
+	image.Data[dataIndex+1] = color.G
+	image.Data[dataIndex+2] = color.B
 }
 
 func (image *RgbImage) DrawLine(startX, startY int, endX, endY int, color Color) {
