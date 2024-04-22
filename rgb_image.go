@@ -2,7 +2,10 @@ package govoom
 
 import (
 	"image"
+	"image/color"
+	"image/png"
 	"math"
+	"os"
 )
 
 type RgbImage struct {
@@ -17,6 +20,31 @@ func NewRgbImage(width, height int) *RgbImage {
 		Width:  width,
 		Height: height,
 	}
+}
+
+func (i *RgbImage) SaveToPng(path string, scale int) error {
+	// Create the image
+	upLeft := image.Point{0, 0}
+	lowRight := image.Point{i.Width * scale, i.Height * scale}
+	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
+	// Set the pixels
+	for x := 0; x < i.Width; x++ {
+		for y := 0; y < i.Height; y++ {
+			index := x + (y * i.Height)
+			dataIndex := index * 3
+			for sx := 0; sx < scale; sx++ {
+				for sy := 0; sy < scale; sy++ {
+					img.Set(x*scale+sx, y*scale+sy, color.RGBA{i.Data[dataIndex+0], i.Data[dataIndex+1], i.Data[dataIndex+2], 0xff})
+				}
+			}
+		}
+	}
+	// Encode as PNG.
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	return png.Encode(f, img)
 }
 
 func (image *RgbImage) Clear() {
