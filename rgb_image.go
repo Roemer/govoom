@@ -22,18 +22,18 @@ func NewRgbImage(width, height int) *RgbImage {
 	}
 }
 
-func (i *RgbImage) SaveToPng(path string, scale int) error {
+func (img *RgbImage) SaveToPng(path string, scale int) error {
 	// Create the image
-	img := image.NewRGBA(image.Rect(0, 0, i.Width*scale, i.Height*scale))
+	goImg := image.NewRGBA(image.Rect(0, 0, img.Width*scale, img.Height*scale))
 
 	// Set the pixels
-	for x := 0; x < i.Width; x++ {
-		for y := 0; y < i.Height; y++ {
-			index := (x * i.Height) + y
+	for x := 0; x < img.Width; x++ {
+		for y := 0; y < img.Height; y++ {
+			index := img.calculateIndex(x, y)
 			dataIndex := index * 3
 			for sx := 0; sx < scale; sx++ {
 				for sy := 0; sy < scale; sy++ {
-					img.Set(x*scale+sx, y*scale+sy, color.RGBA{i.Data[dataIndex+0], i.Data[dataIndex+1], i.Data[dataIndex+2], 0xff})
+					goImg.Set(x*scale+sx, y*scale+sy, color.RGBA{img.Data[dataIndex+0], img.Data[dataIndex+1], img.Data[dataIndex+2], 0xff})
 				}
 			}
 		}
@@ -44,33 +44,33 @@ func (i *RgbImage) SaveToPng(path string, scale int) error {
 	if err != nil {
 		return err
 	}
-	return png.Encode(f, img)
+	return png.Encode(f, goImg)
 }
 
-func (image *RgbImage) Clear() {
-	image.DrawRectangleFilled(0, 0, image.Width-1, image.Height-1, ColorBlack, ColorBlack)
+func (img *RgbImage) Clear() {
+	img.DrawRectangleFilled(0, 0, img.Width-1, img.Height-1, ColorBlack, ColorBlack)
 }
 
-func (image *RgbImage) Fill(color Color) {
-	image.DrawRectangleFilled(0, 0, image.Width-1, image.Height-1, color, color)
+func (img *RgbImage) Fill(color Color) {
+	img.DrawRectangleFilled(0, 0, img.Width-1, img.Height-1, color, color)
 }
 
-func (image *RgbImage) DrawPixel(x, y int, color Color) {
+func (img *RgbImage) DrawPixel(x, y int, color Color) {
 	// The pixel is outside of the bounds, skip it
-	if x < 0 || y < 0 || x >= image.Width || y >= image.Height {
+	if x < 0 || y < 0 || x >= img.Width || y >= img.Height {
 		return
 	}
 
 	// Calculate the index
-	index := (x * image.Height) + y
+	index := img.calculateIndex(x, y)
 
 	// Draw the pixel at the index
-	image.DrawPixelAtIndex(index, color)
+	img.DrawPixelAtIndex(index, color)
 }
 
-func (image *RgbImage) DrawPixelAtIndex(index int, color Color) {
+func (img *RgbImage) DrawPixelAtIndex(index int, color Color) {
 	// The index outside of the bounds, skip it
-	if index < 0 || index >= image.Width*image.Height {
+	if index < 0 || index >= img.Width*img.Height {
 		return
 	}
 
@@ -78,12 +78,12 @@ func (image *RgbImage) DrawPixelAtIndex(index int, color Color) {
 	dataIndex := index * 3
 
 	// Set the pixel
-	image.Data[dataIndex+0] = color.R
-	image.Data[dataIndex+1] = color.G
-	image.Data[dataIndex+2] = color.B
+	img.Data[dataIndex+0] = color.R
+	img.Data[dataIndex+1] = color.G
+	img.Data[dataIndex+2] = color.B
 }
 
-func (image *RgbImage) DrawLine(startX, startY int, endX, endY int, color Color) {
+func (img *RgbImage) DrawLine(startX, startY int, endX, endY int, color Color) {
 	// Use Bresenham’s Line Algorithm
 	dx := int(math.Abs(float64(endX) - float64(startX)))
 	sx := -1
@@ -99,7 +99,7 @@ func (image *RgbImage) DrawLine(startX, startY int, endX, endY int, color Color)
 	x := startX
 	y := startY
 	for {
-		image.DrawPixel(x, y, color)
+		img.DrawPixel(x, y, color)
 		if x == endX && y == endY {
 			break
 		}
@@ -121,27 +121,27 @@ func (image *RgbImage) DrawLine(startX, startY int, endX, endY int, color Color)
 	}
 }
 
-func (image *RgbImage) DrawRectangle(left, top int, right, bottom int, borderColor Color) {
-	image.DrawLine(left, top, right, top, borderColor)
-	image.DrawLine(right, top, right, bottom, borderColor)
-	image.DrawLine(right, bottom, left, bottom, borderColor)
-	image.DrawLine(left, bottom, left, top, borderColor)
+func (img *RgbImage) DrawRectangle(left, top int, right, bottom int, borderColor Color) {
+	img.DrawLine(left, top, right, top, borderColor)
+	img.DrawLine(right, top, right, bottom, borderColor)
+	img.DrawLine(right, bottom, left, bottom, borderColor)
+	img.DrawLine(left, bottom, left, top, borderColor)
 }
 
-func (image *RgbImage) DrawRectangleFilled(left, top int, right, bottom int, borderColor Color, fillColor Color) {
-	image.DrawRectangle(left, top, right, bottom, borderColor)
+func (img *RgbImage) DrawRectangleFilled(left, top int, right, bottom int, borderColor Color, fillColor Color) {
+	img.DrawRectangle(left, top, right, bottom, borderColor)
 	for x := left + 1; x < right; x++ {
 		for y := top + 1; y < bottom; y++ {
-			image.DrawPixel(x, y, fillColor)
+			img.DrawPixel(x, y, fillColor)
 		}
 	}
 }
 
-func (image *RgbImage) DrawImage(x, y int, img image.Image) {
-	w, h := img.Bounds().Dx(), img.Bounds().Dy()
+func (img *RgbImage) DrawImage(x, y int, goImg image.Image) {
+	w, h := goImg.Bounds().Dx(), goImg.Bounds().Dy()
 	for py := 0; py < h; py++ {
 		for px := 0; px < w; px++ {
-			r, g, b, a := img.At(px, py).RGBA()
+			r, g, b, a := goImg.At(px, py).RGBA()
 			if a == 0 {
 				// Skip pixels with full transparency
 				continue
@@ -153,31 +153,31 @@ func (image *RgbImage) DrawImage(x, y int, img image.Image) {
 				// Target.B = ((1 - Source.A) * BGColor.B) + (Source.A * Source.B)
 			}
 			r8, g8, b8 := r>>8, g>>8, b>>8
-			image.DrawPixel(px+x, py+y, NewColor(byte(r8), byte(g8), byte(b8)))
+			img.DrawPixel(px+x, py+y, NewColor(byte(r8), byte(g8), byte(b8)))
 		}
 	}
 }
 
-func (image *RgbImage) DrawGlyph(glyph PixelGlyph, x, y int, color Color) int {
+func (img *RgbImage) DrawGlyph(glyph PixelGlyph, x, y int, color Color) int {
 	for localY, dy := range glyph.Pixels {
 		for localX, dx := range dy {
 			if dx == 1 {
-				image.DrawPixel(x+localX, y+localY+glyph.Offset, color)
+				img.DrawPixel(x+localX, y+localY+glyph.Offset, color)
 			}
 		}
 	}
 	return glyph.GetWidth()
 }
 
-func (image *RgbImage) DrawCharacter(character rune, x, y int, font PixelFont, color Color) int {
+func (img *RgbImage) DrawCharacter(character rune, x, y int, font PixelFont, color Color) int {
 	glyph, exists := font.Glyphs[character]
 	if !exists {
 		return 0
 	}
-	return image.DrawGlyph(glyph, x, y, color)
+	return img.DrawGlyph(glyph, x, y, color)
 }
 
-func (image *RgbImage) DrawText(text string, x, y int, font PixelFont, color Color, alignment TextAlignment) int {
+func (img *RgbImage) DrawText(text string, x, y int, font PixelFont, color Color, alignment TextAlignment) int {
 	// Create a list with glyphs and their local position
 	glyphs := []PixelGlyph{}
 	glyphsPos := []int{}
@@ -209,7 +209,11 @@ func (image *RgbImage) DrawText(text string, x, y int, font PixelFont, color Col
 	}
 	// Draw the glyphs
 	for i, glyph := range glyphs {
-		image.DrawGlyph(glyph, glyphsPos[i]+x, y, color)
+		img.DrawGlyph(glyph, glyphsPos[i]+x, y, color)
 	}
 	return totalWidth
+}
+
+func (img *RgbImage) calculateIndex(x, y int) int {
+	return x + (y * img.Width)
 }
