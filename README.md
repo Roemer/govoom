@@ -37,12 +37,12 @@ if err != nil {
     // Handle error
 }
 defer f.Close()
-image, _, err := image.Decode(f)
+loadedImage, _, err := image.Decode(f)
 if err != nil {
     // Handle error
 }
 // Convert the image to a byte array
-imageData := govoom.ImageToRGB24Bytes(image1)
+imageData := govoom.ImageToRGB24Bytes(loadedImage)
 // Reset the ID as otherwise the image is not updated
 client.ResetSendingAnimationPicId()
 // Send the image as a single frame to the display
@@ -52,24 +52,24 @@ client.SendAnimation(1, 1, 0, 64, 1000, imageData)
 Manually creating an image and using that as background looks like this:
 ```go
 // Create the image in the appropriate size
-image := govoom.NewRgbImage(64, 64)
+img := govoom.NewRgbImage(64, 64)
 // Use the methods on the image to paint the image or add text directly:
 // Drawing pixels
-image.DrawPixel(5, 5, govoom.ColorWhite)
+img.DrawPixel(5, 5, govoom.ColorWhite)
 // Drawing lines
-image.DrawLine(10, 0, 20, 5, govoom.ColorRed)
+img.DrawLine(10, 0, 20, 5, govoom.ColorRed)
 // Drawing rectangles
-image.DrawRectangleFilled(25, 0, 30, 10, govoom.ColorGreen, govoom.ColorAqua)
+img.DrawRectangleFilled(25, 0, 30, 10, govoom.ColorGreen, govoom.ColorAqua)
 // Writing text in a PICO8-like font
-image.DrawText("Left", 0, 15, govoom.ColorWhite, govoom.TextAlignmentLeft)
-image.DrawText("Centered", 31, 21, govoom.ColorWhite, govoom.TextAlignmentMiddle)
-image.DrawText("Right", 63, 27, govoom.ColorWhite, govoom.TextAlignmentRight)
+img.DrawText("Left", 0, 15, govoom.Fonts.Pico8, govoom.ColorWhite, govoom.TextAlignmentLeft)
+img.DrawText("Centered", 31, 21, govoom.Fonts.Pico8, govoom.ColorWhite, govoom.TextAlignmentMiddle)
+img.DrawText("Right", 63, 27, govoom.Fonts.Pico8, govoom.ColorWhite, govoom.TextAlignmentRight)
 // Add an image from the disk
 mySmallImage := loadImage(pathToImage) // Same as for the background image
-image.DrawImage(30, 30, mySmallImage)
+img.DrawImage(30, 30, mySmallImage)
 // Reset the id and send the image as background
 client.ResetSendingAnimationPicId()
-client.SendAnimation(1, 1, 0, 64, 1000, image.Data)
+client.SendAnimation(1, 1, 0, 64, 1000, img.Data)
 ```
 
 ### Texts
