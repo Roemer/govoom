@@ -48,7 +48,7 @@ func (img *RgbImage) SaveToPng(path string, scale int) error {
 }
 
 func (img *RgbImage) Clear() {
-	img.DrawRectangleFilled(0, 0, img.Width-1, img.Height-1, ColorBlack, ColorBlack)
+	img.DrawRectangleFilled(0, 0, img.Width-1, img.Height-1, Colors.Black, Colors.Black)
 }
 
 func (img *RgbImage) Fill(color Color) {
