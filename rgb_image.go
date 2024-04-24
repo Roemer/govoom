@@ -121,18 +121,20 @@ func (img *RgbImage) DrawLine(startX, startY int, endX, endY int, color Color) {
 	}
 }
 
-func (img *RgbImage) DrawRectangle(left, top int, right, bottom int, borderColor Color) {
+func (img *RgbImage) DrawRectangle(left, top int, width, height int, borderColor Color) {
+	right := left + width
+	bottom := top + height
 	img.DrawLine(left, top, right, top, borderColor)
 	img.DrawLine(right, top, right, bottom, borderColor)
 	img.DrawLine(right, bottom, left, bottom, borderColor)
 	img.DrawLine(left, bottom, left, top, borderColor)
 }
 
-func (img *RgbImage) DrawRectangleFilled(left, top int, right, bottom int, borderColor Color, fillColor Color) {
-	img.DrawRectangle(left, top, right, bottom, borderColor)
-	for x := left + 1; x < right; x++ {
-		for y := top + 1; y < bottom; y++ {
-			img.DrawPixel(x, y, fillColor)
+func (img *RgbImage) DrawRectangleFilled(left, top int, width, height int, borderColor Color, fillColor Color) {
+	img.DrawRectangle(left, top, width, height, borderColor)
+	for x := 1; x < width; x++ {
+		for y := 1; y < height; y++ {
+			img.DrawPixel(left+x, top+y, fillColor)
 		}
 	}
 }

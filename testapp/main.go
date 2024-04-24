@@ -15,5 +15,7 @@ func main() {
 	img.DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:;_-+%*(){}[]<=>?!^|¦/\\'\"`", 0, 6, govoom.Fonts.Pico8, govoom.Colors.Aqua, govoom.TextAlignmentLeft)
 	img.DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:;_-+%*(){}[]<=>?!^|¦/\\'\"`", 0, 12, govoom.Fonts.Pico8Narrow, govoom.Colors.Aqua, govoom.TextAlignmentLeft)
 
+	img.DrawRectangleFilled(5, 20, 20, 5, govoom.Colors.Orange, govoom.Colors.Salmon)
+
 	img.SaveToPng("image.png", 4)
 }
