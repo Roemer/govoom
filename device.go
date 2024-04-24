@@ -42,3 +42,16 @@ func FindDevices() ([]*Device, error) {
 
 	return data.DeviceList, err
 }
+
+func FindDeviceByMac(mac string) (*Device, error) {
+	devices, err := FindDevices()
+	if err != nil {
+		return nil, err
+	}
+	for _, device := range devices {
+		if device.DeviceMAC == mac {
+			return device, nil
+		}
+	}
+	return nil, fmt.Errorf("could not find device with mac '%s'", mac)
+}
