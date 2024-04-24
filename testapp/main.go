@@ -17,5 +17,12 @@ func main() {
 
 	img.DrawRectangleFilled(5, 20, 20, 5, govoom.Colors.Orange, govoom.Colors.Salmon)
 
-	img.SaveToPng("image.png", 4)
+	for radius := 0; radius <= 10; radius++ {
+		img.DrawCircle(40+(radius*radius)+2*radius, 30, radius, govoom.Colors.Green)
+	}
+	for radius := 0; radius <= 10; radius++ {
+		img.DrawCircleFilled(40+(radius*radius)+2*radius, 40, radius, govoom.Colors.Blue, govoom.Colors.Green)
+	}
+
+	img.SaveToPng("image.png", 10)
 }

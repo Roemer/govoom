@@ -139,6 +139,14 @@ func (img *RgbImage) DrawRectangleFilled(left, top int, width, height int, borde
 	}
 }
 
+func (img *RgbImage) DrawCircle(centerX, centerY int, radius int, borderColor Color) {
+	img.drawCircleInternal(centerX, centerY, radius, borderColor, borderColor, false)
+}
+
+func (img *RgbImage) DrawCircleFilled(centerX, centerY int, radius int, borderColor Color, fillColor Color) {
+	img.drawCircleInternal(centerX, centerY, radius, borderColor, fillColor, true)
+}
+
 func (img *RgbImage) DrawImage(x, y int, goImg image.Image) {
 	w, h := goImg.Bounds().Dx(), goImg.Bounds().Dy()
 	for py := 0; py < h; py++ {
@@ -216,6 +224,48 @@ func (img *RgbImage) DrawText(text string, x, y int, font PixelFont, color Color
 	return totalWidth
 }
 
+////////////////////////////////////////////////////////////
+// Internal Methods
+////////////////////////////////////////////////////////////
+
 func (img *RgbImage) calculateIndex(x, y int) int {
 	return x + (y * img.Width)
+}
+
+// Draws a circle
+func (img *RgbImage) drawCircleInternal(centerX, centerY int, radius int, borderColor Color, fillColor Color, fillCircle bool) {
+	// Slightly modified Bresenham's Algorithm
+	// See: https://funloop.org/post/2021-03-15-bresenham-circle-drawing-algorithm.html
+	x := radius
+	y := 0
+	e := 3 - 2*radius
+	for {
+		if x < y {
+			break
+		}
+		if fillCircle {
+			img.DrawLine(centerX+(+x), centerY+(+y), centerX+(+x), centerY+(-y), fillColor)
+			img.DrawLine(centerX+(-x), centerY+(+y), centerX+(-x), centerY+(-y), fillColor)
+			img.DrawLine(centerX+(+y), centerY+(+x), centerX+(+y), centerY+(-x), fillColor)
+			img.DrawLine(centerX+(-y), centerY+(+x), centerX+(-y), centerY+(-x), fillColor)
+		} else {
+			img.DrawPixel(centerX+(+x), centerY+(+y), borderColor)
+			img.DrawPixel(centerX+(+x), centerY+(-y), borderColor)
+			img.DrawPixel(centerX+(-x), centerY+(+y), borderColor)
+			img.DrawPixel(centerX+(-x), centerY+(-y), borderColor)
+			img.DrawPixel(centerX+(+y), centerY+(+x), borderColor)
+			img.DrawPixel(centerX+(+y), centerY+(-x), borderColor)
+			img.DrawPixel(centerX+(-y), centerY+(+x), borderColor)
+			img.DrawPixel(centerX+(-y), centerY+(-x), borderColor)
+		}
+		if e > 1 { // Changed from 0 to 1 to make slightly wider circles
+			x--
+			e -= 4 * x
+		}
+		y++
+		e += 4*y + 2
+	}
+	if fillCircle {
+		img.drawCircleInternal(centerX, centerY, radius, borderColor, fillColor, false)
+	}
 }
