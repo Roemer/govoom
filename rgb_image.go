@@ -122,8 +122,11 @@ func (img *RgbImage) DrawLine(startX, startY int, endX, endY int, color Color) {
 }
 
 func (img *RgbImage) DrawRectangle(left, top int, width, height int, borderColor Color) {
-	right := left + width
-	bottom := top + height
+	if width < 1 || height < 1 {
+		return
+	}
+	right := left + width - 1
+	bottom := top + height - 1
 	img.DrawLine(left, top, right, top, borderColor)
 	img.DrawLine(right, top, right, bottom, borderColor)
 	img.DrawLine(right, bottom, left, bottom, borderColor)
@@ -132,8 +135,8 @@ func (img *RgbImage) DrawRectangle(left, top int, width, height int, borderColor
 
 func (img *RgbImage) DrawRectangleFilled(left, top int, width, height int, borderColor Color, fillColor Color) {
 	img.DrawRectangle(left, top, width, height, borderColor)
-	for x := 1; x < width; x++ {
-		for y := 1; y < height; y++ {
+	for x := 1; x < width-1; x++ {
+		for y := 1; y < height-1; y++ {
 			img.DrawPixel(left+x, top+y, fillColor)
 		}
 	}
