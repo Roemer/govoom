@@ -1,5 +1,7 @@
 package govoom
 
+import "fmt"
+
 // A type to represent a color.
 type Color struct {
 	R byte
@@ -10,6 +12,10 @@ type Color struct {
 // Constructor method for a color.
 func NewColor(r, g, b byte) Color {
 	return Color{R: r, G: g, B: b}
+}
+
+func (c Color) ToHex() string {
+	return fmt.Sprintf("#%02X%02X%02X", c.R, c.G, c.B)
 }
 
 // A handfull of colors ready to be used.
