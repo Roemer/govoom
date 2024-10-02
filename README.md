@@ -2,7 +2,13 @@
 Go Library to interact with devices from divoom (eg. Pixoo-64) via the HTTP API.
 
 The official documentation for the API is here: https://docin.divoom-gz.com/web/#/5/23
+
 Alternative Link: http://doc.divoom-gz.com/web/#/12?page_id=143
+
+## Help
+If you have ideas or issues, feel free to create issues here in this GitHub repository.
+
+There is some additional information available in the [wiki](https://github.com/Roemer/govoom/wiki).
 
 ## Installation
 
