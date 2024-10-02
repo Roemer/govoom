@@ -4,16 +4,14 @@ type fonts struct {
 	Pico8       PixelFont
 	Pico8Narrow PixelFont
 	Slumbers    PixelFont
+	Smallest    PixelFont
 }
 
-var Fonts fonts
-
-func init() {
-	Fonts = fonts{
-		Pico8:       FontPico8,
-		Pico8Narrow: FontPico8Narrow,
-		Slumbers:    FontSlumbers,
-	}
+var Fonts = fonts{
+	Pico8:       FontPico8,
+	Pico8Narrow: FontPico8Narrow,
+	Slumbers:    FontSlumbers,
+	Smallest:    FontSmallest,
 }
 
 // This type represents a font.

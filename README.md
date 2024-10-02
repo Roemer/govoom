@@ -30,7 +30,7 @@ client.SetBrightness(100)
 
 ### Animation and Images
 
-The usual approach to create a custom screen is to create a background image (or animation) and then display text above.
+The usual approach to create a custom screen is to create a background image (or animation) and then display text above. But you can also embedd text directly in the image.
 
 For background images, there are two variants:
 1. Load an image from the disk and use that one
@@ -78,6 +78,27 @@ img.DrawImage(30, 30, mySmallImage)
 client.ResetSendingAnimationPicId()
 client.SendAnimation(1, 1, 0, 64, 1000, img.Data)
 ```
+
+#### Fonts to draw onto an image
+
+There are some small pixel fonts implemented in this library to paint directly onto an image.
+
+| Font | Description |
+| ---- | ----------- |
+| Pico8 | Slim (3x5) font with upper- and lowercase letters, numbers and symbols |
+| Pico8Narrow | Same as Pico8 but not monospace and therefore more dense |
+| Slumbers | Slim (3x5) font with mathematical symbols and uppercase letters |
+| Smallest | Smallest 3x3 readable font |
+
+For example images with the fonts, check out the wiki entry about [Fonts](https://github.com/Roemer/govoom/wiki/Fonts).
+
+#### Testing an image
+
+If you want to test how your drawn image looks, you can also easily save it to a png file like this:
+```go
+img.SaveToPng("image.png", 10)
+```
+The first parameter is just the path to the image, the second is the scale as a 1:1 scale on a modern monitor is very, very small so I suggest 10 to view the image on a monitor.
 
 ### Texts
 
